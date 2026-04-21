@@ -4,7 +4,7 @@ export interface GameSettings {
   timeBonusSeconds: number
 }
 export const gameSettings: GameSettings = {
-  moveSpeed: 10,
+  moveSpeed: 12,
   startTimeSeconds: 180,
   timeBonusSeconds: 5,
 }

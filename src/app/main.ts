@@ -8,6 +8,7 @@ type BeforeInstallPromptEvent = Event & {
   prompt: () => Promise<void>
 }
 
+const appDisplayVersion = `v${__APP_VERSION__}+${__APP_BUILD__}`
 const app = document.getElementById('app') as HTMLElement
 renderApp(app)
 
@@ -26,8 +27,14 @@ const gameOverDialog = document.getElementById('game-over-dialog') as HTMLElemen
 const gameOverScoreValue = document.getElementById('game-over-score-value') as HTMLElement | null
 const gameOverNameInput = document.getElementById('game-over-name') as HTMLInputElement | null
 const highScoresList = document.getElementById('high-scores-list') as HTMLElement | null
+const appVersionBadge = document.getElementById('app-version-badge') as HTMLElement | null
 
 let pendingGameOverScore = 0
+
+if (appVersionBadge) {
+  appVersionBadge.textContent = appDisplayVersion
+  appVersionBadge.title = `Application build ${appDisplayVersion}`
+}
 
 export function showScreen(screen: ScreenName): void {
   Object.values(screens).forEach((element) => {

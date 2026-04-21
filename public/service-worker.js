@@ -10,7 +10,6 @@ const APP_SHELL_PATHS = [
   'icon-512-maskable.png',
   'screenshot-1.png',
   'screenshot-2.png',
-  'map-nederland.png',
 ];
 
 function toAppUrl(path) {

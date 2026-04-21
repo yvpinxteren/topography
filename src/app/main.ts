@@ -1,10 +1,12 @@
 import '../styles/style.css'
+import mapNetherlandsUrl from '../assets/map-nederland.png'
 import { exitGameToMenu, initializeGameUi, startGameNetherlands, syncIdleStartTime } from '../features/game/game'
 import { initializeGameSettings } from '../features/settings/settings'
 import { renderApp } from './layout'
 
 const app = document.getElementById('app') as HTMLElement
 renderApp(app)
+initializeStaticAssets()
 
 type ScreenName = 'menu' | 'newGame' | 'gameNetherlands' | 'highScores' | 'settings' | 'credits'
 
@@ -15,6 +17,16 @@ const screens: Record<ScreenName, HTMLElement> = {
   highScores: document.getElementById('high-scores-screen') as HTMLElement,
   settings: document.getElementById('settings-screen') as HTMLElement,
   credits: document.getElementById('credits-screen') as HTMLElement,
+}
+
+function initializeStaticAssets(): void {
+  const mapElement = document.getElementById('map-netherlands') as HTMLImageElement | null
+
+  if (!mapElement) {
+    return
+  }
+
+  mapElement.src = mapNetherlandsUrl
 }
 
 export function showScreen(screen: ScreenName): void {

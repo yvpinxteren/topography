@@ -1,0 +1,99 @@
+.settings-content {
+  background-color: rgba(0, 255, 0, 0.1);
+  border: 2px solid var(--primary-color);
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.settings-content label {
+  display: block;
+  margin: 1rem 0;
+  color: var(--primary-color);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.settings-content input[type='checkbox'] {
+  margin-right: 0.5rem;
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+}
+
+.settings-group {
+  margin-top: 2rem;
+  border-top: 1px solid var(--primary-color);
+  padding-top: 1rem;
+}
+
+.settings-group label {
+  display: block;
+  margin-bottom: 1rem;
+  color: var(--primary-color);
+  font-size: 12px;
+  cursor: default;
+}
+
+.slider-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.speed-slider {
+  width: 200px;
+  height: 10px;
+  cursor: pointer;
+  accent-color: var(--primary-color);
+}
+
+#speed-value,
+#time-bonus-value,
+#start-time-value {
+  color: var(--secondary-color);
+  font-weight: bold;
+  min-width: 30px;
+}
+
+@media (max-width: 768px) {
+  .settings-group label {
+    font-size: 11px;
+  }
+
+  .speed-slider {
+    width: 150px;
+  }
+}
+
+@media (max-width: 480px) {
+  .settings-content {
+    padding: 1rem;
+    margin: 1rem 0;
+  }
+
+  .settings-group {
+    margin-top: 1rem;
+    padding-top: 0.8rem;
+  }
+
+  .settings-group label {
+    font-size: 10px;
+    margin-bottom: 0.8rem;
+  }
+
+  .slider-container {
+    gap: 0.5rem;
+  }
+
+  .speed-slider {
+    width: 120px;
+    height: 8px;
+  }
+
+  #speed-value,
+  #time-bonus-value,
+  #start-time-value {
+    font-size: 10px;
+  }
+}

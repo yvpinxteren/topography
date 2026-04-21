@@ -1,0 +1,198 @@
+.game-viewport {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.game-top-hud {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100px;
+  background-color: rgba(0, 0, 0, 0.95);
+  border-bottom: 3px solid var(--border-color);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 30;
+  padding: 1rem 0;
+}
+
+.hud-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.hud-stat .hud-label {
+  font-size: 11px;
+  color: var(--primary-color);
+  letter-spacing: 1px;
+}
+
+.hud-stat .hud-value {
+  font-size: 18px;
+  color: var(--secondary-color);
+  font-weight: bold;
+  text-shadow: 0 0 10px var(--primary-color);
+}
+
+.countdown-overlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 50;
+  pointer-events: none;
+}
+
+.countdown-text {
+  font-size: 150px;
+  color: var(--secondary-color);
+  font-family: 'Press Start 2P', cursive;
+  text-shadow: 0 0 20px var(--border-color), 0 0 40px var(--secondary-color);
+  animation: countdownPulse 1s ease-out;
+}
+
+@keyframes countdownPulse {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.game-map {
+  position: absolute;
+  width: 5600px;
+  height: auto;
+  min-height: 5600px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  user-select: none;
+  image-rendering: crisp-edges;
+}
+
+.target-marker {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 18px;
+  height: 18px;
+  z-index: 12;
+  pointer-events: none;
+}
+
+.target-marker::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffd7d7 0%, #ff4b4b 35%, #c50000 100%);
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 12px rgba(255, 59, 59, 0.85);
+  transform-origin: center;
+  animation: targetHeartbeat 1.1s ease-in-out infinite;
+}
+
+.helicopter {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  margin-top: 50px;
+}
+
+.helicopter-svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 10px #ffff00);
+}
+
+.main-rotors {
+  transform-origin: 50px 50px;
+  animation: rotateMainRotors 0.3s linear infinite;
+}
+
+.tail-rotor {
+  transform-origin: 80px 50px;
+  animation: rotateTailRotor 0.15s linear infinite;
+}
+
+@keyframes rotateMainRotors {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes rotateTailRotor {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes targetHeartbeat {
+  0% {
+    transform: scale(0.85);
+    box-shadow: 0 0 8px rgba(255, 59, 59, 0.65);
+  }
+  25% {
+    transform: scale(1.2);
+    box-shadow: 0 0 18px rgba(255, 59, 59, 0.95);
+  }
+  40% {
+    transform: scale(0.95);
+    box-shadow: 0 0 12px rgba(255, 59, 59, 0.75);
+  }
+  55% {
+    transform: scale(1.25);
+    box-shadow: 0 0 22px rgba(255, 59, 59, 1);
+  }
+  100% {
+    transform: scale(0.85);
+    box-shadow: 0 0 8px rgba(255, 59, 59, 0.65);
+  }
+}
+
+.game-coordinates {
+  position: absolute;
+  bottom: 2rem;
+  left: 2rem;
+  background-color: rgba(0, 0, 0, 0.8);
+  border: 2px solid var(--primary-color);
+  padding: 1rem;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 11px;
+  color: var(--primary-color);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}

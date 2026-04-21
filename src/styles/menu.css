@@ -1,0 +1,51 @@
+.game-title {
+  font-size: 2.5rem;
+  margin: 0 0 2rem;
+  color: var(--secondary-color);
+  text-shadow:
+    3px 3px 0 var(--primary-color),
+    6px 6px 0 var(--border-color),
+    2px 2px 5px rgba(0, 0, 0, 0.8);
+  letter-spacing: 2px;
+  animation: titleGlow 2s ease-in-out infinite;
+}
+
+@keyframes titleGlow {
+  0%,
+  100% {
+    text-shadow:
+      3px 3px 0 var(--primary-color),
+      6px 6px 0 var(--border-color),
+      2px 2px 5px rgba(0, 0, 0, 0.8);
+  }
+  50% {
+    text-shadow:
+      3px 3px 0 var(--primary-color),
+      6px 6px 0 var(--border-color),
+      0 0 10px var(--border-color),
+      2px 2px 5px rgba(0, 0, 0, 0.8);
+  }
+}
+
+@media (max-width: 768px) {
+  .game-title {
+    font-size: 1.8rem;
+    margin: 0 0 1.5rem;
+  }
+
+  .game-subtitle {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .game-title {
+    font-size: 1.3rem;
+    margin: 0 0 1rem;
+    letter-spacing: 1px;
+  }
+
+  .game-subtitle {
+    font-size: 8px;
+  }
+}

@@ -1,0 +1,33 @@
+<div class="screen" id="settings-screen" hidden>
+  <div class="menu-container">
+    <h2>SETTINGS</h2>
+    <div class="settings-content">
+      <label><input type="checkbox" checked> Sound Effects</label>
+
+      <div class="settings-group">
+        <label for="speed-slider">Helicopter Speed:</label>
+        <div class="slider-container">
+          <input type="range" id="speed-slider" min="1" max="30" value="10" class="speed-slider">
+          <span id="speed-value">10</span>
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <label for="time-bonus-slider">Time Bonus Per Target:</label>
+        <div class="slider-container">
+          <input type="range" id="time-bonus-slider" min="0" max="30" value="5" class="speed-slider">
+          <span id="time-bonus-value">5</span>
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <label for="start-time-slider">Start Time (seconds):</label>
+        <div class="slider-container">
+          <input type="range" id="start-time-slider" min="30" max="600" step="30" value="180" class="speed-slider">
+          <span id="start-time-value">180</span>
+        </div>
+      </div>
+    </div>
+    <button class="menu-button btn-back" id="btn-back-settings">Back to Menu</button>
+  </div>
+</div>

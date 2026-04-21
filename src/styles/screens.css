@@ -1,0 +1,84 @@
+.main-menu,
+.screen {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  color: var(--text-color);
+}
+
+.main-menu::before,
+.screen::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    0deg,
+    rgba(255, 0, 255, 0.03) 0px,
+    rgba(255, 0, 255, 0.03) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.menu-container {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 2rem;
+  max-width: 600px;
+  border: 4px solid var(--border-color);
+  background-color: rgba(0, 0, 0, 0.8);
+  box-shadow: 0 0 20px var(--border-color), inset 0 0 20px rgba(255, 0, 255, 0.1);
+}
+
+.menu-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.menu-button {
+  padding: 1rem 2rem;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 14px;
+  color: var(--bg-color);
+  background-color: var(--primary-color);
+  border: 3px solid var(--border-color);
+  cursor: pointer;
+  transition: all 0.1s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 3px 3px 0 var(--border-color);
+}
+
+.menu-button:hover {
+  background-color: var(--secondary-color);
+  color: var(--bg-color);
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0 var(--border-color);
+}
+
+.menu-button:active {
+  transform: translate(0, 0);
+  box-shadow: 1px 1px 0 var(--border-color);
+}
+
+.screen h2 {
+  font-size: 1.8rem;
+  margin: 0 0 2rem;
+  color: var(--secondary-color);
+  text-shadow: 2px 2px 0 var(--border-color);
+  letter-spacing: 2px;
+}
+
+.btn-back {
+  margin-top: 2rem;
+}

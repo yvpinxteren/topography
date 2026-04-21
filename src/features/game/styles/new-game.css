@@ -1,0 +1,18 @@
+.screen-copy {
+  margin-top: 2rem;
+  font-size: 13px;
+  color: var(--text-color);
+}
+
+@media (max-width: 768px) {
+  .screen-copy {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .screen-copy {
+    font-size: 10px;
+    margin-top: 1rem;
+  }
+}

@@ -1,0 +1,5 @@
+[http]
+	sslVerify = false
+[user]
+	name = Youri van Pinxteren
+	email = youri.van.pinxteren@caci.nl

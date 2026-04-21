@@ -1,0 +1,10 @@
+@import './base.css';
+@import './screens.css';
+@import './menu.css';
+@import '../features/game/styles/game.css';
+@import '../features/game/styles/new-game.css';
+@import '../features/high-scores/styles/high-scores.css';
+@import '../features/settings/styles/settings.css';
+@import '../features/credits/styles/credits.css';
+@import './dialogs.css';
+@import './responsive.css';

@@ -45,6 +45,7 @@ export let gameState: GameState = {
 }
 
 const TARGET_REACH_DISTANCE = 32
+const TARGET_REACH_PADDING = 10
 
 let activeAnimationId: number | null = null
 let activeTimerInterval: number | null = null
@@ -360,8 +361,12 @@ function checkTargetReached(): void {
   const targetCenterY = targetRect.top + targetRect.height / 2
 
   const distance = Math.hypot(targetCenterX - helicopterCenterX, targetCenterY - helicopterCenterY)
+  const dynamicReachDistance = Math.max(
+    TARGET_REACH_DISTANCE,
+    (Math.min(helicopterRect.width, helicopterRect.height) + Math.max(targetRect.width, targetRect.height)) / 2 + TARGET_REACH_PADDING,
+  )
 
-  if (distance <= TARGET_REACH_DISTANCE) {
+  if (distance <= dynamicReachDistance) {
     gameState.points += 1
     gameState.timeRemaining += gameSettings.timeBonusSeconds
     selectRandomCity()

@@ -1,4 +1,6 @@
 import { gameSettings } from '../settings/settings'
+import { getGameComponentElements } from './gameComponent'
+import { createVirtualJoystick, DIRECTION_KEYS } from './virtualJoystick'
 import type { City, GameState, GameUiActions } from '../../types/game'
 
 // Game cities data
@@ -50,6 +52,49 @@ let activeCountdownInterval: number | null = null
 let activeCountdownTimeout: number | null = null
 let removeGameControls: (() => void) | null = null
 let gameUiActions: GameUiActions | null = null
+const keyboardDirectionState = createDirectionState()
+const joystickDirectionState = createDirectionState()
+
+type DirectionKey = typeof DIRECTION_KEYS[number]
+
+function createDirectionState(): Record<DirectionKey, boolean> {
+  return {
+    ArrowUp: false,
+    ArrowDown: false,
+    ArrowLeft: false,
+    ArrowRight: false,
+  }
+}
+
+function syncDirectionalInputs(): void {
+  DIRECTION_KEYS.forEach((direction) => {
+    gameState.keysPressed[direction] = keyboardDirectionState[direction] || joystickDirectionState[direction]
+  })
+}
+
+function resetDirectionalInputs(): void {
+  DIRECTION_KEYS.forEach((direction) => {
+    keyboardDirectionState[direction] = false
+    joystickDirectionState[direction] = false
+    gameState.keysPressed[direction] = false
+  })
+}
+
+function setKeyboardDirection(direction: DirectionKey, isPressed: boolean): void {
+  keyboardDirectionState[direction] = isPressed
+  syncDirectionalInputs()
+}
+
+function setJoystickDirections(nextState: Record<DirectionKey, boolean>): void {
+  DIRECTION_KEYS.forEach((direction) => {
+    joystickDirectionState[direction] = nextState[direction]
+  })
+  syncDirectionalInputs()
+}
+
+function resetJoystickDirections(): void {
+  setJoystickDirections(createDirectionState())
+}
 
 export function initializeGameUi(actions: GameUiActions): void {
   gameUiActions = actions
@@ -66,10 +111,9 @@ export function selectRandomCity(): void {
 
 export function startGameNetherlands(): void {
   window.setTimeout(() => {
-    const mapElement = document.getElementById('map-netherlands') as HTMLImageElement | null
-    const countdownOverlay = document.getElementById('countdown-overlay') as HTMLElement | null
+    const gameComponent = getGameComponentElements()
 
-    if (!mapElement || !countdownOverlay) {
+    if (!gameComponent) {
       console.error('Game elements not found')
       return
     }
@@ -78,22 +122,23 @@ export function startGameNetherlands(): void {
 
     gameState.mapX = 0
     gameState.mapY = 0
-    gameState.keysPressed = {}
+    gameState.keysPressed = createDirectionState()
+    resetDirectionalInputs()
     gameState.timeRemaining = gameSettings.startTimeSeconds
     gameState.points = 0
     gameState.targetCity = null
     gameState.gameActive = false
     gameState.countdownActive = true
-    resetGameView(mapElement, countdownOverlay)
-    setupGameControls(mapElement)
+    resetGameView(gameComponent.map, gameComponent.countdownOverlay)
+    setupGameControls(gameComponent.map)
 
     selectRandomCity()
-    showCountdown(countdownOverlay, mapElement)
+    showCountdown(gameComponent.countdownOverlay, gameComponent.map)
   }, 0)
 }
 
 export function showCountdown(countdownOverlay: HTMLElement, mapElement: HTMLImageElement): void {
-  const countdownText = document.getElementById('countdown-text')
+  const countdownText = getGameComponentElements()?.countdownText
   if (!countdownText) return
   
   let count = 3
@@ -147,9 +192,10 @@ export function endGame(): void {
 }
 
 export function updateGameHUD(): void {
-  const hudPoints = document.getElementById('hud-points')
-  const hudTarget = document.getElementById('hud-target')
-  const hudTime = document.getElementById('hud-time')
+  const gameComponent = getGameComponentElements()
+  const hudPoints = gameComponent?.hudPoints
+  const hudTarget = gameComponent?.hudTarget
+  const hudTime = gameComponent?.hudTime
 
   if (hudPoints) hudPoints.textContent = gameState.points.toString()
   if (hudTarget) hudTarget.textContent = gameState.targetCity?.name.toUpperCase() || '---'
@@ -164,6 +210,8 @@ export function updateGameHUD(): void {
 }
 
 export function setupGameControls(mapElement: HTMLImageElement): void {
+  const gameComponent = getGameComponentElements()
+
   // Track key presses
   const handleKeyDown = (event: KeyboardEvent) => {
     // Handle Escape key for exit confirmation
@@ -173,19 +221,30 @@ export function setupGameControls(mapElement: HTMLImageElement): void {
       return
     }
 
-    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) {
+    if (DIRECTION_KEYS.includes(event.key as DirectionKey)) {
       event.preventDefault()
-      gameState.keysPressed[event.key] = true
+      setKeyboardDirection(event.key as DirectionKey, true)
     }
   }
 
   const handleKeyUp = (event: KeyboardEvent) => {
-    gameState.keysPressed[event.key] = false
+    if (DIRECTION_KEYS.includes(event.key as DirectionKey)) {
+      setKeyboardDirection(event.key as DirectionKey, false)
+    }
   }
 
   // Add event listeners
   document.addEventListener('keydown', handleKeyDown)
   document.addEventListener('keyup', handleKeyUp)
+  const teardownJoystick = gameComponent
+    ? createVirtualJoystick({
+        elements: {
+          joystick: gameComponent.joystick,
+          joystickThumb: gameComponent.joystickThumb,
+        },
+        onDirectionChange: setJoystickDirections,
+      })
+    : resetJoystickDirections
 
   // Map boundaries - calculate dynamically based on viewport size
   const MAP_WIDTH = 5632 //1024x5.5
@@ -236,6 +295,7 @@ export function setupGameControls(mapElement: HTMLImageElement): void {
   removeGameControls = () => {
     document.removeEventListener('keydown', handleKeyDown)
     document.removeEventListener('keyup', handleKeyUp)
+    teardownJoystick()
   }
 
   // Start game loop
@@ -246,7 +306,7 @@ export function setupGameControls(mapElement: HTMLImageElement): void {
 function resetGameView(mapElement: HTMLImageElement, countdownOverlay: HTMLElement): void {
   mapElement.style.transform = 'translate(-50%, -50%)'
   countdownOverlay.style.display = 'flex'
-  const countdownText = document.getElementById('countdown-text')
+  const countdownText = getGameComponentElements()?.countdownText
   if (countdownText) {
     countdownText.textContent = '3'
   }
@@ -255,15 +315,16 @@ function resetGameView(mapElement: HTMLImageElement, countdownOverlay: HTMLEleme
 }
 
 function updateCoordinateDisplay(): void {
-  const coordinateLines = document.querySelectorAll('#game-coordinates span')
-  if (coordinateLines.length < 2) return
+  const coordinateLines = getGameComponentElements()?.coordinateLines
+
+  if (!coordinateLines || coordinateLines.length < 2) return
 
   coordinateLines[0].textContent = `X: ${Math.round(gameState.mapX)}`
   coordinateLines[1].textContent = `Y: ${Math.round(gameState.mapY)}`
 }
 
 function updateTargetMarkerPosition(): void {
-  const targetMarker = document.getElementById('target-marker') as HTMLElement | null
+  const targetMarker = getGameComponentElements()?.targetMarker ?? null
 
   if (!targetMarker || !gameState.targetCity) {
     if (targetMarker) {
@@ -282,8 +343,9 @@ function updateTargetMarkerPosition(): void {
 }
 
 function checkTargetReached(): void {
-  const helicopter = document.querySelector('.helicopter') as HTMLElement | null
-  const targetMarker = document.getElementById('target-marker') as HTMLElement | null
+  const gameComponent = getGameComponentElements()
+  const helicopter = gameComponent?.helicopter ?? null
+  const targetMarker = gameComponent?.targetMarker ?? null
 
   if (!gameState.targetCity || !helicopter || !targetMarker || targetMarker.hidden) {
     return
@@ -321,7 +383,7 @@ export function exitGameToMenu(): void {
 function cleanupCurrentGame(): void {
   gameState.gameActive = false
   gameState.countdownActive = false
-  gameState.keysPressed = {}
+  resetDirectionalInputs()
 
   if (activeAnimationId !== null) {
     cancelAnimationFrame(activeAnimationId)

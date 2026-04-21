@@ -196,3 +196,19 @@
   flex-direction: column;
   gap: 0.5rem;
 }
+
+@media (max-width: 768px) {
+  .game-coordinates {
+    bottom: 1.25rem;
+    left: 1.25rem;
+    padding: 0.75rem;
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .game-coordinates {
+    font-size: 9px;
+    gap: 0.35rem;
+  }
+}

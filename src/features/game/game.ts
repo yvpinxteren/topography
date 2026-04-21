@@ -252,11 +252,13 @@ export function setupGameControls(mapElement: HTMLImageElement): void {
   const MAP_HEIGHT = 8448 //1536x5.5
   const viewportWidth = window.innerWidth
   const viewportHeight = window.innerHeight
+  const edgePaddingX = viewportWidth / 2
+  const edgePaddingY = viewportHeight / 2
 
-  // Allow full movement to edges - calculate how much we can move
-  // The map should always fill the screen, so max offset is when map edge touches screen edge
-  const MAX_OFFSET_X = Math.max(0, (MAP_WIDTH - viewportWidth) / 2)
-  const MAX_OFFSET_Y = Math.max(0, (MAP_HEIGHT - viewportHeight) / 2)
+  // Allow extra travel past the visible map edges so the helicopter can still
+  // reach targets located on the outer border of the map.
+  const MAX_OFFSET_X = Math.max(0, (MAP_WIDTH - viewportWidth) / 2 + edgePaddingX)
+  const MAX_OFFSET_Y = Math.max(0, (MAP_HEIGHT - viewportHeight) / 2 + edgePaddingY)
 
   console.log(`Viewport: ${viewportWidth}x${viewportHeight}, Max offsets: X=${MAX_OFFSET_X}, Y=${MAX_OFFSET_Y}`)
 

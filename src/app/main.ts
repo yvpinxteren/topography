@@ -103,7 +103,7 @@ async function setupServiceWorker(): Promise<void> {
   }
 
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js').catch((error) => {
+    navigator.serviceWorker.register(`${import.meta.env.BASE_URL}service-worker.js`).catch((error) => {
       console.log('Service Worker registration failed:', error)
     })
   })

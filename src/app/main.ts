@@ -3,6 +3,10 @@ import { exitGameToMenu, initializeGameUi, startGameNetherlands, syncIdleStartTi
 import { initializeGameSettings } from '../features/settings/settings'
 import { renderApp } from './layout'
 
+type BeforeInstallPromptEvent = Event & {
+  prompt: () => Promise<void>
+}
+
 const app = document.getElementById('app') as HTMLElement
 renderApp(app)
 
@@ -109,6 +113,80 @@ async function setupServiceWorker(): Promise<void> {
   })
 }
 
+function setupPwaDebug(): void {
+  const params = new URLSearchParams(window.location.search)
+  const shouldShowDebug = params.get('pwa-debug') === '1'
+
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches
+    || ('standalone' in navigator && Boolean((navigator as Navigator & { standalone?: boolean }).standalone))
+
+  const logPrefix = '[PWA Debug]'
+  console.log(`${logPrefix} standalone mode:`, isStandalone)
+
+  if (!shouldShowDebug) {
+    window.addEventListener('beforeinstallprompt', () => {
+      console.log(`${logPrefix} beforeinstallprompt fired`)
+    })
+
+    window.addEventListener('appinstalled', () => {
+      console.log(`${logPrefix} appinstalled fired`)
+    })
+
+    return
+  }
+
+  const indicator = document.createElement('div')
+  indicator.setAttribute('aria-live', 'polite')
+  indicator.style.position = 'fixed'
+  indicator.style.left = '12px'
+  indicator.style.bottom = '12px'
+  indicator.style.zIndex = '9999'
+  indicator.style.maxWidth = 'min(70vw, 280px)'
+  indicator.style.padding = '10px 12px'
+  indicator.style.border = '1px solid rgba(0, 255, 0, 0.45)'
+  indicator.style.borderRadius = '10px'
+  indicator.style.background = 'rgba(0, 0, 0, 0.82)'
+  indicator.style.color = '#9cff9c'
+  indicator.style.font = '12px/1.4 monospace'
+  indicator.style.boxShadow = '0 0 18px rgba(0, 0, 0, 0.35)'
+  indicator.style.backdropFilter = 'blur(4px)'
+  document.body.append(indicator)
+
+  const setIndicatorText = (message: string): void => {
+    indicator.textContent = `PWA: ${message}`
+    console.log(`${logPrefix} ${message}`)
+  }
+
+  setIndicatorText(isStandalone ? 'standalone geopend' : 'wachten op install-signaal')
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.ready
+      .then(() => {
+        setIndicatorText(isStandalone ? 'standalone + sw gereed' : 'service worker gereed')
+      })
+      .catch(() => {
+        setIndicatorText('service worker niet gereed')
+      })
+  } else {
+    setIndicatorText('service worker niet ondersteund')
+  }
+
+  window.addEventListener('beforeinstallprompt', () => {
+    setIndicatorText('installable: beforeinstallprompt ontvangen')
+  })
+
+  window.addEventListener('appinstalled', () => {
+    setIndicatorText('app geïnstalleerd')
+  })
+
+  window.matchMedia('(display-mode: standalone)').addEventListener('change', (event) => {
+    if (event.matches) {
+      setIndicatorText('standalone geopend')
+    }
+  })
+}
+
 setupNavigation()
+setupPwaDebug()
 void setupServiceWorker()
 showScreen('menu')

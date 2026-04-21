@@ -1,6 +1,7 @@
 {
   "name": "GeoChopper - Retro Game",
   "short_name": "GeoChopper",
+  "id": ".",
   "description": "Een retro-stijl topografie leerspel voor Nederland",
   "start_url": ".",
   "scope": ".",

@@ -19,6 +19,10 @@
   width: 90%;
 }
 
+.game-over-dialog-content {
+  max-width: 440px;
+}
+
 .exit-dialog-content h3 {
   color: var(--secondary-color);
   font-size: 18px;
@@ -31,6 +35,36 @@
   font-size: 12px;
   margin: 0 0 25px;
   line-height: 1.4;
+}
+
+.game-over-score {
+  color: var(--secondary-color);
+  text-shadow: 0 0 10px rgba(255, 234, 0, 0.45);
+}
+
+.game-over-label {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--primary-color);
+  font-size: 11px;
+}
+
+.game-over-input {
+  width: 100%;
+  margin-bottom: 20px;
+  padding: 12px 14px;
+  border: 2px solid var(--primary-color);
+  background-color: rgba(0, 0, 0, 0.85);
+  color: var(--secondary-color);
+  font-family: 'Press Start 2P', cursive;
+  font-size: 10px;
+  text-transform: uppercase;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.game-over-input:focus {
+  box-shadow: 0 0 14px rgba(0, 255, 0, 0.25);
 }
 
 .exit-dialog-buttons {

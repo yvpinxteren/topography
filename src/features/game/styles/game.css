@@ -111,6 +111,28 @@
   animation: targetHeartbeat 1.1s ease-in-out infinite;
 }
 
+.crash-explosion {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 22px;
+  height: 22px;
+  transform: translate(-50%, 10px) scale(0.1);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, #fff6ad 0%, #ffde37 28%, #ff7b00 58%, rgba(255, 60, 0, 0.85) 72%, rgba(255, 60, 0, 0) 100%);
+  box-shadow:
+    0 0 0 10px rgba(255, 120, 0, 0.22),
+    0 0 28px rgba(255, 94, 0, 0.75);
+  opacity: 0;
+  z-index: 16;
+  pointer-events: none;
+}
+
+.crash-explosion.visible {
+  animation: crashExplosion 0.85s ease-out forwards;
+}
+
 .helicopter {
   position: absolute;
   width: 118px;
@@ -123,6 +145,14 @@
   align-items: center;
   z-index: 10;
   margin-top: 50px;
+}
+
+.helicopter.crashing {
+  animation: helicopterCrash 0.95s ease-in forwards;
+}
+
+.helicopter.exploded {
+  opacity: 0;
 }
 
 .helicopter-svg {
@@ -156,6 +186,33 @@
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes helicopterCrash {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg) scale(1);
+  }
+  40% {
+    transform: translate(-50%, -32%) rotate(8deg) scale(1.02);
+  }
+  100% {
+    transform: translate(-50%, 88%) rotate(95deg) scale(0.82);
+  }
+}
+
+@keyframes crashExplosion {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 12px) scale(0.1);
+  }
+  18% {
+    opacity: 1;
+    transform: translate(-50%, 12px) scale(2.8);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, 12px) scale(4.5);
   }
 }
 

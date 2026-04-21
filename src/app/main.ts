@@ -1,5 +1,6 @@
 import '../styles/style.css'
 import { exitGameToMenu, initializeGameUi, startGameNetherlands, syncIdleStartTime } from '../features/game/game'
+import { addHighScore, renderHighScores } from '../features/high-scores/highScores'
 import { initializeGameSettings } from '../features/settings/settings'
 import { renderApp } from './layout'
 
@@ -21,6 +22,13 @@ const screens: Record<ScreenName, HTMLElement> = {
   credits: document.getElementById('credits-screen') as HTMLElement,
 }
 
+const gameOverDialog = document.getElementById('game-over-dialog') as HTMLElement | null
+const gameOverScoreValue = document.getElementById('game-over-score-value') as HTMLElement | null
+const gameOverNameInput = document.getElementById('game-over-name') as HTMLInputElement | null
+const highScoresList = document.getElementById('high-scores-list') as HTMLElement | null
+
+let pendingGameOverScore = 0
+
 export function showScreen(screen: ScreenName): void {
   Object.values(screens).forEach((element) => {
     element.hidden = true
@@ -29,10 +37,24 @@ export function showScreen(screen: ScreenName): void {
   screens[screen].hidden = false
 }
 
+function renderHighScoresScreen(): void {
+  if (highScoresList) {
+    renderHighScores(highScoresList)
+  }
+}
+
+function showHighScoresScreen(): void {
+  renderHighScoresScreen()
+  showScreen('highScores')
+}
+
 initializeGameUi({
   showMenuScreen: () => showScreen('menu'),
+  showHighScoresScreen,
   showExitDialog,
   hideExitDialog,
+  showGameOverDialog,
+  hideGameOverDialog,
 })
 
 function setupNavigation(): void {
@@ -41,7 +63,7 @@ function setupNavigation(): void {
   })
 
   document.getElementById('btn-new-game')?.addEventListener('click', () => showScreen('newGame'))
-  document.getElementById('btn-high-scores')?.addEventListener('click', () => showScreen('highScores'))
+  document.getElementById('btn-high-scores')?.addEventListener('click', () => showHighScoresScreen())
   document.getElementById('btn-settings')?.addEventListener('click', () => showScreen('settings'))
   document.getElementById('btn-credits')?.addEventListener('click', () => showScreen('credits'))
 
@@ -67,6 +89,14 @@ function setupNavigation(): void {
     hideExitDialog()
   })
 
+  document.getElementById('btn-game-over-confirm')?.addEventListener('click', submitHighScore)
+  gameOverNameInput?.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault()
+      submitHighScore()
+    }
+  })
+
   document.addEventListener('keydown', (event) => {
     const currentScreen = Object.values(screens).find((screen) => !screen.hidden)
     if (event.key === 'Escape' && currentScreen && currentScreen.id !== 'game-netherlands-screen') {
@@ -87,6 +117,38 @@ function hideExitDialog(): void {
   if (exitDialog) {
     exitDialog.hidden = true
   }
+}
+
+function showGameOverDialog(score: number): void {
+  pendingGameOverScore = score
+
+  if (gameOverScoreValue) {
+    gameOverScoreValue.textContent = score.toString()
+  }
+
+  if (gameOverNameInput) {
+    gameOverNameInput.value = ''
+  }
+
+  if (gameOverDialog) {
+    gameOverDialog.hidden = false
+  }
+
+  window.setTimeout(() => {
+    gameOverNameInput?.focus()
+  }, 0)
+}
+
+function hideGameOverDialog(): void {
+  if (gameOverDialog) {
+    gameOverDialog.hidden = true
+  }
+}
+
+function submitHighScore(): void {
+  addHighScore(gameOverNameInput?.value ?? 'PLAYER', pendingGameOverScore)
+  hideGameOverDialog()
+  showHighScoresScreen()
 }
 
 async function setupServiceWorker(): Promise<void> {
@@ -187,6 +249,7 @@ function setupPwaDebug(): void {
 }
 
 setupNavigation()
+renderHighScoresScreen()
 setupPwaDebug()
 void setupServiceWorker()
 showScreen('menu')

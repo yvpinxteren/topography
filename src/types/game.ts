@@ -18,6 +18,9 @@ export interface GameState {
 
 export interface GameUiActions {
   showMenuScreen: () => void
+  showHighScoresScreen: () => void
   showExitDialog: () => void
   hideExitDialog: () => void
+  showGameOverDialog: (score: number) => void
+  hideGameOverDialog: () => void
 }

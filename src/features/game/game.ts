@@ -46,6 +46,8 @@ export let gameState: GameState = {
 
 const TARGET_REACH_DISTANCE = 32
 const TARGET_REACH_PADDING = 10
+const HELICOPTER_CRASH_DURATION_MS = 950
+const CRASH_EXPLOSION_DURATION_MS = 850
 
 let activeAnimationId: number | null = null
 let activeTimerInterval: number | null = null
@@ -188,8 +190,8 @@ export function startGameTimer(): void {
 }
 
 export function endGame(): void {
-  console.log(`Game Over! Final Points: ${gameState.points}`)
-  exitGameToMenu()
+  const finalScore = gameState.points
+  void playCrashSequence(finalScore)
 }
 
 export function updateGameHUD(): void {
@@ -307,12 +309,22 @@ export function setupGameControls(mapElement: HTMLImageElement): void {
 }
 
 function resetGameView(mapElement: HTMLImageElement, countdownOverlay: HTMLElement): void {
+  const gameComponent = getGameComponentElements()
+
   mapElement.style.transform = 'translate(-50%, -50%)'
   countdownOverlay.style.display = 'flex'
-  const countdownText = getGameComponentElements()?.countdownText
+  const countdownText = gameComponent?.countdownText
+
+  if (gameComponent) {
+    gameComponent.helicopter.classList.remove('crashing', 'exploded')
+    gameComponent.crashExplosion.hidden = true
+    gameComponent.crashExplosion.classList.remove('visible')
+  }
+
   if (countdownText) {
     countdownText.textContent = '3'
   }
+  gameUiActions?.hideGameOverDialog()
   gameUiActions?.hideExitDialog()
   updateGameHUD()
 }
@@ -387,6 +399,56 @@ export function exitGameToMenu(): void {
   gameUiActions?.showMenuScreen()
 }
 
+async function playCrashSequence(finalScore: number): Promise<void> {
+  const gameComponent = getGameComponentElements()
+
+  if (!gameComponent) {
+    gameUiActions?.showGameOverDialog(finalScore)
+    return
+  }
+
+  if (activeAnimationId !== null) {
+    cancelAnimationFrame(activeAnimationId)
+    activeAnimationId = null
+  }
+
+  if (activeTimerInterval !== null) {
+    clearInterval(activeTimerInterval)
+    activeTimerInterval = null
+  }
+
+  if (removeGameControls) {
+    removeGameControls()
+    removeGameControls = null
+  }
+
+  gameComponent.targetMarker.hidden = true
+  gameUiActions?.hideExitDialog()
+
+  gameComponent.helicopter.classList.remove('exploded')
+  gameComponent.helicopter.classList.add('crashing')
+
+  await wait(HELICOPTER_CRASH_DURATION_MS)
+
+  gameComponent.helicopter.classList.add('exploded')
+  gameComponent.crashExplosion.hidden = false
+  gameComponent.crashExplosion.classList.remove('visible')
+  void gameComponent.crashExplosion.offsetWidth
+  gameComponent.crashExplosion.classList.add('visible')
+
+  await wait(CRASH_EXPLOSION_DURATION_MS)
+
+  gameComponent.crashExplosion.hidden = true
+  gameComponent.crashExplosion.classList.remove('visible')
+  gameUiActions?.showGameOverDialog(finalScore)
+}
+
+function wait(durationMs: number): Promise<void> {
+  return new Promise((resolve) => {
+    window.setTimeout(resolve, durationMs)
+  })
+}
+
 function cleanupCurrentGame(): void {
   gameState.gameActive = false
   gameState.countdownActive = false
@@ -417,5 +479,14 @@ function cleanupCurrentGame(): void {
     removeGameControls = null
   }
 
+  const gameComponent = getGameComponentElements()
+  if (gameComponent) {
+    gameComponent.targetMarker.hidden = true
+    gameComponent.helicopter.classList.remove('crashing', 'exploded')
+    gameComponent.crashExplosion.hidden = true
+    gameComponent.crashExplosion.classList.remove('visible')
+  }
+
+  gameUiActions?.hideGameOverDialog()
   gameUiActions?.hideExitDialog()
 }

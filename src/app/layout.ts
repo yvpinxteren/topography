@@ -1,5 +1,6 @@
 import creditsScreen from '../features/credits/screens/creditsScreen.html?raw'
 import exitDialog from '../features/game/screens/exitDialog.html?raw'
+import gameOverDialog from '../features/game/screens/gameOverDialog.html?raw'
 import { renderGameScreen } from '../features/game/gameComponent'
 import highScoresScreen from '../features/high-scores/screens/highScoresScreen.html?raw'
 import menuScreen from './screens/menuScreen.html?raw'
@@ -15,5 +16,6 @@ export function renderApp(root: HTMLElement): void {
     settingsScreen,
     creditsScreen,
     exitDialog,
+    gameOverDialog,
   ].join('\n')
 }

@@ -13,6 +13,7 @@ export type GameComponentElements = {
   countdownOverlay: HTMLElement
   countdownText: HTMLElement
   targetMarker: HTMLElement
+  crashExplosion: HTMLElement
   helicopter: HTMLElement
   joystick: HTMLElement
   joystickThumb: HTMLElement
@@ -41,6 +42,7 @@ export function getGameComponentElements(root: QueryParent = document): GameComp
   const countdownOverlay = queryRequiredElement<HTMLElement>(screen, '#countdown-overlay')
   const countdownText = queryRequiredElement<HTMLElement>(screen, '#countdown-text')
   const targetMarker = queryRequiredElement<HTMLElement>(screen, '#target-marker')
+  const crashExplosion = queryRequiredElement<HTMLElement>(screen, '#crash-explosion')
   const helicopter = queryRequiredElement<HTMLElement>(screen, '.helicopter')
   const joystick = queryRequiredElement<HTMLElement>(screen, '#mobile-joystick')
   const joystickThumb = queryRequiredElement<HTMLElement>(screen, '#mobile-joystick-thumb')
@@ -48,7 +50,7 @@ export function getGameComponentElements(root: QueryParent = document): GameComp
   const hudTarget = queryRequiredElement<HTMLElement>(screen, '#hud-target')
   const hudTime = queryRequiredElement<HTMLElement>(screen, '#hud-time')
 
-  if (!map || !countdownOverlay || !countdownText || !targetMarker || !helicopter || !joystick || !joystickThumb || !hudPoints || !hudTarget || !hudTime) {
+  if (!map || !countdownOverlay || !countdownText || !targetMarker || !crashExplosion || !helicopter || !joystick || !joystickThumb || !hudPoints || !hudTarget || !hudTime) {
     return null
   }
 
@@ -58,6 +60,7 @@ export function getGameComponentElements(root: QueryParent = document): GameComp
     countdownOverlay,
     countdownText,
     targetMarker,
+    crashExplosion,
     helicopter,
     joystick,
     joystickThumb,
